@@ -2,27 +2,64 @@ library(shiny)
 library(dplyr)
 library(xml2)
 library(rvest)
+library(quantmod)
+library(highcharter)
+library(data.table)
 
-tbl <- read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies') %>% html_nodes(css = 'table')
+source("index.R")
+
+tbl <-
+  read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies') %>% html_nodes(css = 'table')
 tbl <- tbl[1] %>% html_table() %>% as.data.frame()
 tbl$Ticker.symbol <- gsub(pattern = '\\.', '-', tbl$Ticker.symbol)
 SM500security <- tbl$Security
 SM500symbol <- tbl$Ticker.symbol
 SM500Industries <- unique(tbl$GICS.Sector)
 
+indicators.names <- c(
+  "Simple Moving Average",
+  "Exponential Moving Average",
+  "Bollinger Bands",
+  "Commodity Channel Index",
+  "Chande Momentum Oscillator",
+  "Moving Average Convergence Divergence"
+)
+indicators.func <- c("SMA","EMA","BBands","CCI","CMO","MACD")
+
+indicators <- data.frame(indicators.names,indicators.func, stringsAsFactors = FALSE)
+
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
-  
-  
   output$compAbbr <- renderUI({
     field <- input$industry
-    thing1 <- tbl %>% filter(GICS.Sector == field) %>% select(Ticker.symbol)
-    selectInput("thing1", "Company Abbreviation", thing1)
-    
+    if (field != "All") {
+      compsymbols <-
+        tbl %>% filter(GICS.Sector == field) %>% select(Ticker.symbol)
+    } else {
+      compsymbols <-
+        tbl %>% select(Ticker.symbol)
+    }
+    selectInput("symbols", "Company Abbreviation", compsymbols)
   })
   
-  output$industry <- renderPrint({ input$industry })
+  output$selectedstock <- renderDataTable(
+    stocktable <- setnames(setDT(as.data.frame(
+      getSymbols(input$symbols, auto.assign = FALSE)), keep.rownames = TRUE)[], 1, "Date")
+  )
   
+  output$industry <- renderPrint({
+    input$industry
+  })
   
-  
+  output$stockplot <- renderHighchart({
+    stock <- getSymbols(input$symbol, auto.assign = FALSE)
+    chart <- StockChart(stock, input$plottype)
+    if (length(input$indicator) != 0) {
+      for(i in input$indicator) {
+        funcname <- indicators %>% filter(indicators.names == i) %>% select(indicators.func)
+        chart <- AddIndicator(chart,funcname[[1]], stock)
+      }
+    }
+    chart
+  })
 })
