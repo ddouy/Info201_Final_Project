@@ -42,9 +42,11 @@ shinyServer(function(input, output) {
     selectInput("symbols", "Company Abbreviation", compsymbols)
   })
   
-  output$selectedstock <- renderDataTable(
+  output$selectedstock <- renderDataTable({
     stocktable <- setnames(setDT(as.data.frame(
       getSymbols(input$symbols, auto.assign = FALSE)), keep.rownames = TRUE)[], 1, "Date")
+    stocktable <- stocktable[order(as.Date(stocktable$Date, "%Y-%m-%d"), decreasing = TRUE),]
+  }
   )
   
   output$industry <- renderPrint({
@@ -60,6 +62,29 @@ shinyServer(function(input, output) {
         chart <- AddIndicator(chart,funcname[[1]], stock)
       }
     }
+    if (length(input$comparision) != 0) {
+      for (i in input$comparision) {
+        otherstock <- getSymbols(i, auto.assign = FALSE)
+        chart <- AddComparision(chart, otherstock, input$plottype)
+      }
+    }
     chart
+  })
+  
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste(input$predictstock, ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(GetPredictStockData(getSymbols(input$predictstock, auto.assign = FALSE), input$periods), file, row.names = FALSE)
+    }
+  )
+  
+  output$predictstockplot <- renderPlot({
+    if (input$predictstock != "") {
+      stock <- getSymbols(input$predictstock, auto.assign = FALSE)
+      periods <- input$periods
+      return(PredictStock(stock, periods))
+    }
   })
 })

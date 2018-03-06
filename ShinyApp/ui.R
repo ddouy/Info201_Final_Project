@@ -18,56 +18,88 @@ indicators.names <- c(
   "Chande Momentum Oscillator",
   "Moving Average Convergence Divergence"
 )
-indicators.func <- c("SMA","EMA","BBands","CCI","CMO","MACD")
+indicators.func <- c("SMA", "EMA", "BBands", "CCI", "CMO", "MACD")
 indicators <- data.frame()
 # Define UI for application that draws a histogram
 shinyUI(navbarPage(
   # Application title
   "Stock data",
-  tabPanel("chart of the stock",
-           sidebarPanel(
-             selectInput(
-               "symbol",
-               label = h3("name"),
-               choices = SM500symbol,
-               selected = 1
-             ),
-             
-             selectInput(
-               "plottype",
-               label = h3("Plot"),
-               choices = c("candlestick","line", "area", "spline",
-                           "ohlc", "column","columnrange"),
-               selected = 3
-             ),
-             
-             selectInput(
-               "indicator",
-               label = h3("Indicator"),
-               choices = indicators.names,
-               multiple = TRUE
-             )
-           ),
-           mainPanel(
-             highchartOutput("stockplot")
-           )
+  tabPanel(
+    "chart of the stock",
+    sidebarPanel(
+      selectInput(
+        "symbol",
+        label = h3("name"),
+        choices = SM500symbol,
+        selected = 1
+      ),
+      
+      selectInput(
+        "plottype",
+        label = h3("Plot"),
+        choices = c(
+          "candlestick",
+          "line",
+          "area",
+          "spline",
+          "ohlc",
+          "column",
+          "columnrange"
+        ),
+        selected = 3
+      ),
+      
+      selectInput(
+        "indicator",
+        label = h3("Indicator"),
+        choices = indicators.names,
+        multiple = TRUE
+      ),
+      selectInput(
+        "comparision",
+        label = h3("Comparision"),
+        choices = SM500symbol,
+        multiple = TRUE
+      )
+    ),
+    
+    
+    mainPanel(highchartOutput("stockplot"))
   ),
   tabPanel(
-    "table of selected stock",
+    "historical data for stock",
     sidebarPanel(
       selectInput(
         "industry",
         label = h3("Industry"),
-        choices = c("All",SM500Industries),
+        choices = c("All", SM500Industries),
         selected = 1
       ),
       
       
       uiOutput("compAbbr")
     ),
-    mainPanel(
-      dataTableOutput('selectedstock')
-    )
-  )
-  
+    mainPanel(dataTableOutput('selectedstock'))
+  ),
+  tabPanel("Predict stock",
+           sidebarPanel(
+             selectizeInput(
+               'predictstock',
+               'Abbreviation of Company',
+               choices = SM500symbol,
+               options = list(
+                 placeholder = 'Please select a company below',
+                 onInitialize = I('function() { this.setValue(""); }')
+               )
+             ),
+             numericInput(
+               "periods",
+               "period that you want to predict(days)",
+               value = 365
+             ),
+             downloadButton("downloadData", "Download")
+           ),
+           mainPanel(
+             plotOutput("predictstockplot")
+           ))
 ))
