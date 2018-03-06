@@ -1,5 +1,6 @@
 library(shiny)
 library(dplyr)
+library(highcharter)
 library(xml2)
 library(rvest)
 
