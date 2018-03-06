@@ -16,7 +16,7 @@ shinyServer(function(input, output) {
   
   output$compAbbr <- renderUI({
     field <- input$industry
-    thing1 <- tbl %>% filter(GICS.Sector == field)
+    thing1 <- tbl %>% filter(GICS.Sector == field) %>% select(Ticker.symbol)
     selectInput("thing1", "Company Abbreviation", thing1)
     
   })
