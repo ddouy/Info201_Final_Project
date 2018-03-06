@@ -20,10 +20,6 @@ shinyUI(fluidPage(
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
-      dateRangeInput("dates", label = "Date range",
-                     start = "2007-01-03", end = "2018-03-01",
-                     min = "2007-01-03", max = "2018-03-01"),
-    
     
     selectInput("industry", label = h3("Industry"), 
                 choices = SM500Industries, 
@@ -32,11 +28,11 @@ shinyUI(fluidPage(
    
     uiOutput("compAbbr"),
     
-    selectInput("plots", label = h3("plot"), choices = c("Line", "Area", "Candle", "Hollow Candle",
+    selectInput("plot", label = h3("Plot"), choices = c("Line", "Area", "Candle", "Hollow Candle",
                                                          "Bar", "Colored Bar"),
                 selected = 1),
     
-    selectInput("indicators", label = h3("indicator"), choices = c("Moving Average", "Moving Average Envelope",
+    selectInput("indicator", label = h3("Indicator"), choices = c("Moving Average", "Moving Average Envelope",
                                                                    "Moving Average Deviation", "Bollinger Bands",
                                                                    "RSI", "MACD"), multiple = TRUE, selected = 1)
     
