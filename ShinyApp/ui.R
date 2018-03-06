@@ -28,11 +28,8 @@ shinyUI(fluidPage(
     selectInput("industry", label = h3("Industry"), 
                 choices = SM500Industries, 
                 selected = 1),
-    
-    selectInput("names", label = h3("Company Abbreviation"), 
-                choices = SM500symbol, 
-                selected = 1)
-    
+   
+    uiOutput("compAbbr")
   ),
     # Show a plot of the generated distribution
     mainPanel(
