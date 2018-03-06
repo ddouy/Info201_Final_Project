@@ -31,7 +31,15 @@ shinyUI(fluidPage(
     
     selectInput("names", label = h3("Company Abbreviation"), 
                 choices = SM500symbol, 
-                selected = 1)
+                selected = 1),
+    
+    selectInput("plots", label = h3("plot"), choices = c("Line", "Area", "Candle", "Hollow Candle",
+                                                         "Bar", "Colored Bar"),
+                selected = 1),
+    
+    selectInput("indicators", label = h3("indicator"), choices = c("Moving Average", "Moving Average Envelope",
+                                                                   "Moving Average Deviation", "Bollinger Bands",
+                                                                   "RSI", "MACD"), multiple = TRUE, selected = 1)
     
   ),
     # Show a plot of the generated distribution
