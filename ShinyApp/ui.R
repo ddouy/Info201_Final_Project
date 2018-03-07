@@ -26,9 +26,9 @@ indicators <- data.frame()
 shinyUI (navbarPage(
   theme = shinytheme("readable"),
   # Application title
-  "Stock data",
+  "Stock Trends: Visualize & Predict",
   tabPanel(
-    "chart of the stock",
+    "Stock Trends Graphed",
     sidebarPanel(
       selectInput(
         "symbol",
@@ -39,7 +39,7 @@ shinyUI (navbarPage(
       
       selectInput(
         "plottype",
-        label = h3("Plot"),
+        label = h3("Plot Types"),
         choices = c(
           "candlestick",
           "line",
@@ -54,13 +54,13 @@ shinyUI (navbarPage(
       
       selectInput(
         "indicator",
-        label = h3("Indicator"),
+        label = h3("Indicator Options"),
         choices = indicators.names,
         multiple = TRUE
       ),
       selectInput(
         "comparision",
-        label = h3("Comparision"),
+        label = h3("Company to Compare Against"),
         choices = SM500symbol,
         multiple = TRUE
       )
@@ -70,7 +70,7 @@ shinyUI (navbarPage(
     mainPanel(highchartOutput("stockplot"))
   ),
   tabPanel(
-    "historical data for stock",
+    "Stock Historical Data",
     sidebarPanel(
       selectInput(
         "industry",
@@ -84,11 +84,11 @@ shinyUI (navbarPage(
     ),
     mainPanel(dataTableOutput('selectedstock'))
   ),
-  tabPanel("Predict stock",
+  tabPanel("Predict Stocks",
            sidebarPanel(
              selectizeInput(
                'predictstock',
-               'Abbreviation of Company',
+               'Company Symbols',
                choices = SM500symbol,
                options = list(
                  placeholder = 'Please select a company below',
@@ -104,5 +104,20 @@ shinyUI (navbarPage(
            ),
            mainPanel(
              plotOutput("predictstockplot")
-           ))
+           )),
+  tabPanel("About Us",
+           h2("Introductions"),
+           p("Greetings! We are Sangho Bak, Yao Dou, Jeffrey Jing, and David Lee, also known as team \"50/50\", from INFO 201 BD.
+              We're proud and honored to bring you Stock Trends: Visualize and Predict, an interactive program that allows users
+              to analyze stock trends and compare two different stocks from the S&P 500. All data is exportable and downloadable,
+              and is and will always be free to use."),
+           h3 ("About Us"),
+           p("We came upon the name 50/50 when we realized that our group consisted of two koreans and two chinese people. However,
+              we have high hopes that together we'll combine for a solid 100%. Sangho Bak is a Junior who is currently a student in
+              the Foster School of Business, is the oldest member of the group. Jeffrey Jing and David Lee are both Sophomores, who
+              are actively seeking to major in an engineering/technology related field. Yao Dou, the youngest member of our group,
+              is a brilliant Freshman who is only sixteen! Yao is a significant contributor in making ST:VP, and is actively seeking
+              to become a computer science major. The entire team has no doubts of his abilities, and are all rooting for his future
+              success. Together, this ragtag team proudly brings to you Stock Trends: Visualiza and Predict. ")
+           )
 ))
