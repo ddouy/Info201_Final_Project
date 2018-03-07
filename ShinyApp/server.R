@@ -1,9 +1,5 @@
 library(shiny)
-library(dplyr)
-library(xml2)
 library(rvest)
-library(quantmod)
-library(highcharter)
 library(data.table)
 
 source("index.R")

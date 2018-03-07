@@ -21,8 +21,6 @@ indicators.names <- c(
   "Moving Average Convergence Divergence"
 )
 indicators.func <- c("SMA", "EMA", "BBands", "CCI", "CMO", "MACD")
-indicators <- data.frame()
-# Define UI for application that draws a histogram
 shinyUI (navbarPage(
   theme = shinytheme("readable"),
   # Application title
@@ -78,8 +76,6 @@ shinyUI (navbarPage(
         choices = c("All", SM500Industries),
         selected = 1
       ),
-      
-      
       uiOutput("compAbbr")
     ),
     mainPanel(dataTableOutput('selectedstock'))
@@ -103,7 +99,7 @@ shinyUI (navbarPage(
              downloadButton("downloadData", "Download")
            ),
            mainPanel(
-             plotOutput("predictstockplot")
+             plotOutput("predictstockplot", height = "800px")
            )),
   tabPanel("About Us",
            h2("Introductions"),
