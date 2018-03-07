@@ -3,6 +3,7 @@ library(dplyr)
 library(highcharter)
 library(xml2)
 library(rvest)
+library(shinythemes)
 
 tbl <-
   read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies') %>% html_nodes(css = 'table')
@@ -22,7 +23,8 @@ indicators.names <- c(
 indicators.func <- c("SMA", "EMA", "BBands", "CCI", "CMO", "MACD")
 indicators <- data.frame()
 # Define UI for application that draws a histogram
-shinyUI(navbarPage(
+shinyUI (navbarPage(
+  theme = shinytheme("readable"),
   # Application title
   "Stock data",
   tabPanel(
@@ -30,7 +32,7 @@ shinyUI(navbarPage(
     sidebarPanel(
       selectInput(
         "symbol",
-        label = h3("name"),
+        label = h3("Company"),
         choices = SM500symbol,
         selected = 1
       ),

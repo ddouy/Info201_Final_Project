@@ -34,10 +34,11 @@ shinyServer(function(input, output) {
     field <- input$industry
     if (field != "All") {
       compsymbols <-
-        tbl %>% filter(GICS.Sector == field) %>% select(Ticker.symbol)
+        tbl %>% filter(GICS.Sector == field)
+      compsymbols <- compsymbols$Ticker.symbol
     } else {
       compsymbols <-
-        tbl %>% select(Ticker.symbol)
+        tbl$Ticker.symbol
     }
     selectInput("symbols", "Company Abbreviation", compsymbols)
   })
