@@ -50,22 +50,50 @@ shinyServer(function(input, output) {
     input$industry
   })
   
+  v <- reactiveValues(doPlot = FALSE)
+  
+  observeEvent(input$go, {
+    # 0 will be coerced to FALSE
+    # 1+ will be coerced to TRUE
+    v$doPlot <- input$go
+  })
+  
+  
   output$stockplot <- renderHighchart({
-    stock <- getSymbols(input$symbol, auto.assign = FALSE)
-    chart <- StockChart(stock, input$plottype)
-    if (length(input$indicator) != 0) {
-      for(i in input$indicator) {
-        funcname <- indicators %>% filter(indicators.names == i) %>% select(indicators.func)
-        chart <- AddIndicator(chart,funcname[[1]], stock)
+    if (v$doPlot == FALSE) return()
+    if (isolate(input$symbol) != "") {
+      stock <- getSymbols(isolate(input$symbol), auto.assign = FALSE)
+      chart <- StockChart(stock, isolate(input$plottype))
+      if (length(isolate(input$indicator)) != 0) {
+        withProgress(message = "Adding indicators", value = 0, {
+          for(i in isolate(input$indicator)) {
+            funcname <- indicators %>% filter(indicators.names == i) %>% select(indicators.func)
+            chart <- AddIndicator(chart,funcname[[1]], stock)
+            incProgress(1/length(isolate(input$indicator)), detail = paste("add", i))
+          }
+          Sys.sleep(0.8)
+        })
       }
-    }
-    if (length(input$comparision) != 0) {
-      for (i in input$comparision) {
-        otherstock <- getSymbols(i, auto.assign = FALSE)
-        chart <- AddComparision(chart, otherstock, input$plottype)
+      if (length(isolate(input$comparision)) != 0) {
+        withProgress(message = "Adding comparison companies", value = 0, {
+          for (i in isolate(input$comparision)) {
+            otherstock <- getSymbols(i, auto.assign = FALSE)
+            chart <- AddComparision(chart, otherstock, isolate(input$plottype))
+            incProgress(1/length(isolate(input$comparision)), detail = paste("add", i))
+          }
+          Sys.sleep(0.8)
+        })
       }
+      return(chart)
     }
-    chart
+  })
+  
+  v2 <- reactiveValues(doPlot = FALSE)
+  
+  observeEvent(input$go2, {
+    # 0 will be coerced to FALSE
+    # 1+ will be coerced to TRUE
+    v2$doPlot <- input$go2
   })
   
   output$downloadData <- downloadHandler(
@@ -78,10 +106,18 @@ shinyServer(function(input, output) {
   )
   
   output$predictstockplot <- renderPlot({
-    if (input$predictstock != "") {
-      stock <- getSymbols(input$predictstock, auto.assign = FALSE)
-      periods <- input$periods
-      return(PredictStock(stock, periods))
+    if (v2$doPlot == FALSE) return()
+    if (isolate(input$predictstock) != "") {
+      withProgress(message = "Doing plot", value = 0, {
+        stock <- getSymbols(isolate(input$predictstock), auto.assign = FALSE)
+        incProgress(0.4, detail = "getting data")
+        periods <- isolate(input$periods)
+        PredictStock(stock, periods)
+        incProgress(0.4, detail = "predicting")
+        Sys.sleep(1)
+        incProgress(0.2, detail = "done")
+        Sys.sleep(1)
+      })
     }
   })
 })

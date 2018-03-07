@@ -1,6 +1,6 @@
 # Info201_Final_Project
 
-[shiny app](https://douy.shinyapps.io/StockApp/)
+[shiny app](https://douy.shinyapps.io/AmazingStockApp/)
 
 This is the README for the final project for INFO 201. Collaboration partners include SangHo Bak Yao Dou, Jeffrey Jing, and David Lee.
 

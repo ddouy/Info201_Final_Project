@@ -22,17 +22,21 @@ indicators.names <- c(
 )
 indicators.func <- c("SMA", "EMA", "BBands", "CCI", "CMO", "MACD")
 shinyUI (navbarPage(
+  id = "navbar",
   theme = shinytheme("readable"),
   # Application title
   "Stock Trends: Visualize & Predict",
   tabPanel(
     "Stock Trends Graphed",
     sidebarPanel(
-      selectInput(
-        "symbol",
-        label = h3("Company"),
+      selectizeInput(
+        'symbol',
+        label = h3('Company'),
         choices = SM500symbol,
-        selected = 1
+        options = list(
+          placeholder = 'Please select a company below',
+          onInitialize = I('function() { this.setValue(""); }')
+        )
       ),
       
       selectInput(
@@ -61,10 +65,9 @@ shinyUI (navbarPage(
         label = h3("Company to Compare Against"),
         choices = SM500symbol,
         multiple = TRUE
-      )
+      ),
+      actionButton("go", "Plot")
     ),
-    
-    
     mainPanel(highchartOutput("stockplot"))
   ),
   tabPanel(
@@ -96,6 +99,7 @@ shinyUI (navbarPage(
                "period that you want to predict(days)",
                value = 365
              ),
+             actionButton("go2", "Plot predicted data"),
              downloadButton("downloadData", "Download")
            ),
            mainPanel(
