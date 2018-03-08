@@ -1,8 +1,7 @@
 library(shiny)
 library(dplyr)
-library(highcharter)
-library(xml2)
 library(rvest)
+library(highcharter)
 library(shinythemes)
 
 tbl <-
@@ -23,12 +22,14 @@ indicators.names <- c(
 indicators.func <- c("SMA", "EMA", "BBands", "CCI", "CMO", "MACD")
 shinyUI (navbarPage(
   id = "navbar",
+  ## theme of the shiny app
   theme = shinytheme("readable"),
   # Application title
   "Stock Trends: Visualize & Predict",
   tabPanel(
     "Stock Trends Graphed",
     sidebarPanel(
+      ## select box for company symbol(has placeholder)
       selectizeInput(
         'symbol',
         label = h3('Company'),
@@ -38,7 +39,7 @@ shinyUI (navbarPage(
           onInitialize = I('function() { this.setValue(""); }')
         )
       ),
-      
+      ## select box for plot type, selected one is candlestick
       selectInput(
         "plottype",
         label = h3("Plot Types"),
@@ -53,38 +54,45 @@ shinyUI (navbarPage(
         ),
         selected = 3
       ),
-      
+      ## select box for indicator that add to the plot
       selectInput(
         "indicator",
         label = h3("Indicator Options"),
         choices = indicators.names,
         multiple = TRUE
       ),
+      ## select box for the company that add to the plot
       selectInput(
         "comparision",
         label = h3("Company to Compare Against"),
         choices = SM500symbol,
         multiple = TRUE
       ),
+      ## button to plot based on the user input
       actionButton("go", "Plot")
     ),
+    ## stock plot
     mainPanel(highchartOutput("stockplot"))
   ),
   tabPanel(
     "Stock Historical Data",
     sidebarPanel(
+      ## select for the industries of stocks, selected is all
       selectInput(
         "industry",
         label = h3("Industry"),
         choices = c("All", SM500Industries),
         selected = 1
       ),
+      ## symbol of company, which is connecting with industry part
       uiOutput("compAbbr")
     ),
+    ## data table for the selected stock
     mainPanel(dataTableOutput('selectedstock'))
   ),
   tabPanel("Predict Stocks",
            sidebarPanel(
+             ## selected box of the symbols of companies(has placeholder)
              selectizeInput(
                'predictstock',
                'Company Symbols',
@@ -94,14 +102,18 @@ shinyUI (navbarPage(
                  onInitialize = I('function() { this.setValue(""); }')
                )
              ),
+             ## numeric input of the number of days to predict
              numericInput(
                "periods",
-               "period that you want to predict(days)",
+               "period that you want to predict(recommand 365 days)",
                value = 365
              ),
+             ## action button to do the plot
              actionButton("go2", "Plot predicted data"),
-             downloadButton("downloadData", "Download")
+             ## download button to download the csv file of predicted data of the stock
+             downloadButton("downloadData", "Download the predicted data")
            ),
+           ## plot the predicted stock trend
            mainPanel(
              plotOutput("predictstockplot", height = "800px")
            )),
@@ -118,6 +130,6 @@ shinyUI (navbarPage(
               are actively seeking to major in an engineering/technology related field. Yao Dou, the youngest member of our group,
               is a brilliant Freshman who is only sixteen! Yao is a significant contributor in making ST:VP, and is actively seeking
               to become a computer science major. The entire team has no doubts of his abilities, and are all rooting for his future
-              success. Together, this ragtag team proudly brings to you Stock Trends: Visualiza and Predict. ")
+              success. Together, this ragtag team proudly brings to you Stock Trends: Visualize and Predict. ")
            )
 ))
